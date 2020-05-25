@@ -12,9 +12,8 @@ import utils.MonitorConstants;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +24,7 @@ public class TestforTask {
         //不关闭文件会导致资源的泄露，读写文件都同理
         //Java7的try-with-resources可以优雅关闭文件，异常时自动关闭文件；详细解读https://stackoverflow.com/a/12665271
 //        String pathname = "C:\\Users\\admin\\Desktop\\yarntask20190903.txt";
-        String fileName = "yarn_task_20191209";
+        String fileName = "yarn_task_20200512";
         String pathname = "C:\\Users\\admin\\Desktop\\" + fileName + ".txt";
         StringBuffer stringBuffer = new StringBuffer();
         try (FileReader reader = new FileReader(pathname);
@@ -41,7 +40,6 @@ public class TestforTask {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         String path = "E:/";
         LocalDate now = LocalDate.now();
 //        String fileName = "demo";
@@ -79,7 +77,10 @@ public class TestforTask {
 
         String[] title = {"app_id", "user", "app_name", "app_type", "queue", "开始时间", "结束时间", "耗时(分钟)", "状态", "最终状态", "Tracking UI"};
 
+        // 写入excel
         writer(path, fileName, fileType, list, title);
+        // 计算每小时任务数
+        calculate(list);
     }
 
     @SuppressWarnings("resource")
@@ -165,4 +166,114 @@ public class TestforTask {
         //关闭文件流
         stream.close();
     }
+
+    /**
+     * 统计每小时任务数
+     */
+    public static void calculate(List<TaskRecordDto> taskList) {
+        List<LocalDate> localDates = getLocalDates();
+        Map<LocalDate, List<Long>> dateMap = getDateMap();
+
+        // 统计每天每小时任务数
+        for (LocalDate date : localDates) {
+            List<Long> hourList = dateMap.get(date);
+            for (int i = 0; i < hourList.size() - 1; i++) {
+                int count = 0;
+                for (TaskRecordDto task : taskList) {
+                    String startTime = task.getStartTime();
+                    long start = Long.parseLong(startTime);
+                    // hour1 <= start < hour2
+                    if (start >= hourList.get(i) && start < hourList.get(i + 1)) {
+                        count++;
+                    }
+                }
+                System.out.println(String.format("时间\t%s\t数量\t%d", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(hourList.get(i))), count));
+            }
+        }
+
+
+    }
+
+    public static Map<LocalDate, List<Long>> getDateMap() {
+        List<LocalDate> dateList = getLocalDates();
+        Map<LocalDate, List<Long>> dateMap = new HashMap<>();
+        for (LocalDate localDate : dateList) {
+            List<Long> hourList = new ArrayList<>();
+            // 每天24小时
+            long hour00 = localDate.atTime(0, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour01 = localDate.atTime(1, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour02 = localDate.atTime(2, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour03 = localDate.atTime(3, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour04 = localDate.atTime(4, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour05 = localDate.atTime(5, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour06 = localDate.atTime(6, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour07 = localDate.atTime(7, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour08 = localDate.atTime(8, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour09 = localDate.atTime(9, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour10 = localDate.atTime(10, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour11 = localDate.atTime(11, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour12 = localDate.atTime(12, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour13 = localDate.atTime(13, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour14 = localDate.atTime(14, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour15 = localDate.atTime(15, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour16 = localDate.atTime(16, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour17 = localDate.atTime(17, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour18 = localDate.atTime(18, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour19 = localDate.atTime(19, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour20 = localDate.atTime(20, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour21 = localDate.atTime(21, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour22 = localDate.atTime(22, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long hour23 = localDate.atTime(23, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            long nextDayHour00 = localDate.plusDays(1).atTime(0, 0, 0).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            hourList.add(hour00);
+            hourList.add(hour01);
+            hourList.add(hour02);
+            hourList.add(hour03);
+            hourList.add(hour04);
+            hourList.add(hour05);
+            hourList.add(hour06);
+            hourList.add(hour07);
+            hourList.add(hour08);
+            hourList.add(hour09);
+            hourList.add(hour10);
+            hourList.add(hour11);
+            hourList.add(hour12);
+            hourList.add(hour13);
+            hourList.add(hour14);
+            hourList.add(hour15);
+            hourList.add(hour16);
+            hourList.add(hour17);
+            hourList.add(hour18);
+            hourList.add(hour19);
+            hourList.add(hour20);
+            hourList.add(hour21);
+            hourList.add(hour22);
+            hourList.add(hour23);
+            hourList.add(nextDayHour00);
+
+            dateMap.put(localDate, hourList);
+        }
+        return dateMap;
+    }
+
+    private static List<LocalDate> getLocalDates() {
+        // 过去一个星期
+        LocalDate day01 = LocalDate.of(2020, 5, 4);
+        LocalDate day02 = LocalDate.of(2020, 5, 5);
+        LocalDate day03 = LocalDate.of(2020, 5, 6);
+        LocalDate day04 = LocalDate.of(2020, 5, 7);
+        LocalDate day05 = LocalDate.of(2020, 5, 8);
+        LocalDate day06 = LocalDate.of(2020, 5, 9);
+        LocalDate day07 = LocalDate.of(2020, 5, 10);
+        List<LocalDate> dateList = new ArrayList<>();
+        dateList.add(day01);
+        dateList.add(day02);
+        dateList.add(day03);
+        dateList.add(day04);
+        dateList.add(day05);
+        dateList.add(day06);
+        dateList.add(day07);
+        return dateList;
+    }
 }
+
